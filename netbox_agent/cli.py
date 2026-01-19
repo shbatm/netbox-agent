@@ -35,7 +35,11 @@ def run(config):
             raise Exception(
                 "virtual.cluster_name parameter is mandatory because it's a hypervisor"
             )
-        manufacturer = dmidecode.get_by_type(dmi, "Chassis")[0].get("Manufacturer")
+        # Use overridden manufacturer if provided, otherwise detect from dmidecode
+        if config.device.manufacturer:
+            manufacturer = config.device.manufacturer
+        else:
+            manufacturer = dmidecode.get_by_type(dmi, "Chassis")[0].get("Manufacturer")
         try:
             server = MANUFACTURERS[manufacturer](dmi=dmi)
         except KeyError:

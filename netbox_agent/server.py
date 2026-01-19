@@ -139,14 +139,18 @@ class ServerBase:
 
     def get_product_name(self):
         """
-        Return the Chassis Name from dmidecode info
+        Return the Chassis Name from dmidecode info or config override
         """
+        if config.device.model:
+            return config.device.model
         return self.system[0]["Product Name"].strip()
 
     def get_service_tag(self):
         """
-        Return the Service Tag from dmidecode info
+        Return the Service Tag from dmidecode info or config override
         """
+        if config.device.serial:
+            return config.device.serial
         return self.system[0]["Serial Number"].strip()
 
     def get_expansion_service_tag(self):
