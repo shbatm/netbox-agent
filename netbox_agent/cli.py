@@ -58,6 +58,7 @@ def run(config):
         or config.update_location
         or config.update_inventory
         or config.update_psu
+        or config.update_hypervisor
     ):
         server.netbox_create_or_update(config)
     return 0
