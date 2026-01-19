@@ -11,7 +11,7 @@ network:
   lldp: true
 
 #
-# You can use these to change the roles.
+# You can use these to change the roles and override system information.
 #
 #device:
 # chassis_role: "Server Chassis"
@@ -19,6 +19,10 @@ network:
 # server_role: "Server"
 # tags: server, blade, ,just a comma,delimited,list
 # custom_fields: field1=value1,field2=value2
+# # Override system information detected from dmidecode
+# # manufacturer: "HP"
+# # model: "ProLiant DL380 Gen10"
+# # serial: "MYSERIAL123"
 #
 #
 # Use this to set the tenant

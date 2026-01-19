@@ -90,6 +90,21 @@ def get_config():
         "--device.chassis_role", default=r"Server Chassis", help="role to use for a chassis"
     )
     p.add_argument("--device.server_role", default=r"Server", help="role to use for a server")
+    p.add_argument(
+        "--device.manufacturer",
+        default=None,
+        help="Override system manufacturer (vendor) detected from dmidecode",
+    )
+    p.add_argument(
+        "--device.model",
+        default=None,
+        help="Override system model (Product Name) detected from dmidecode",
+    )
+    p.add_argument(
+        "--device.serial",
+        default=None,
+        help="Override system serial number detected from dmidecode",
+    )
     p.add_argument("--tenant.driver", help="tenant driver, ie cmd, file")
     p.add_argument("--tenant.driver_file", help="tenant driver custom driver file path")
     p.add_argument("--tenant.regex", help="tenant regex to extract Netbox tenant slug")

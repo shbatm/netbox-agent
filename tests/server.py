@@ -88,3 +88,69 @@ def test_hp_blade_with_gpu_expansion(fixture):
     assert server.is_blade() is True
     assert server.own_expansion_slot() is True
     assert server.get_expansion_service_tag() == "4242 expansion"
+
+
+@parametrize_with_fixtures("dmidecode/", only_filenames=["unknown.txt"])
+def test_product_name_override_with_mock():
+    """Test that device.model config overrides dmidecode Product Name."""
+    from unittest.mock import MagicMock
+    import netbox_agent.server
+
+    # Store original config
+    original_config = netbox_agent.server.config
+    original_get_device_platform = netbox_agent.server.get_device_platform
+
+    # Create mock config
+    mock_config = MagicMock()
+    mock_config.device.model = "OverriddenModel"
+    mock_config.device.serial = None
+    mock_config.device.platform = None
+    mock_config.device.tags = ""
+    mock_config.device.custom_fields = ""
+
+    # Replace temporarily
+    netbox_agent.server.config = mock_config
+    netbox_agent.server.get_device_platform = lambda x: MagicMock()
+
+    try:
+        with open("tests/fixtures/dmidecode/unknown.txt", "r") as f:
+            fixture = "".join(f.readlines())
+        dmi = parse(fixture)
+        server = ServerBase(dmi)
+        # Should return overridden value
+        assert server.get_product_name() == "OverriddenModel"
+    finally:
+        # Restore original
+        netbox_agent.server.config = original_config
+        netbox_agent.server.get_device_platform = original_get_device_platform
+
+
+@parametrize_with_fixtures("dmidecode/", only_filenames=["unknown.txt"])
+def test_serial_override_with_mock():
+    """Test that device.serial config overrides dmidecode Serial Number."""
+    from unittest.mock import MagicMock
+    import netbox_agent.server
+
+    original_config = netbox_agent.server.config
+    original_get_device_platform = netbox_agent.server.get_device_platform
+
+    mock_config = MagicMock()
+    mock_config.device.model = None
+    mock_config.device.serial = "OVERRIDDEN123"
+    mock_config.device.platform = None
+    mock_config.device.tags = ""
+    mock_config.device.custom_fields = ""
+
+    netbox_agent.server.config = mock_config
+    netbox_agent.server.get_device_platform = lambda x: MagicMock()
+
+    try:
+        with open("tests/fixtures/dmidecode/unknown.txt", "r") as f:
+            fixture = "".join(f.readlines())
+        dmi = parse(fixture)
+        server = ServerBase(dmi)
+        # Should return overridden value
+        assert server.get_service_tag() == "OVERRIDDEN123"
+    finally:
+        netbox_agent.server.config = original_config
+        netbox_agent.server.get_device_platform = original_get_device_platform
